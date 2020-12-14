@@ -1,36 +1,47 @@
-<!DOCTYPE html> 
 <html>
+
 <head>
-<style>
-h1 {text-align: center;}
-p {text-align: center;}
-div {text-align: center;}
-</style>
+	<title>Is the Earth's surface temperature rising?</title>
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	<h1>Is the Earth's surface temperature rising?</h1>
+	<div align="center" style="text-align:center; font-weight:bold; align-items=center;"><hr></div>
+	<h3>A time-based visualization of surface temperature data</h3>
 </head>
-<body> 
 
-<div> 
-  <button onclick="playPause()">Play/Pause</button>
-  <br><br>
-  <video id="video1" width="1000" height="600" autoplay>
-  	<source src="SurfaceTempViz.mp4" type="video/mp4">
-		Your browser does not support the video tag.
-	</video>
-</div> 
+<body>
 
-<script> 
-var myVideo = document.getElementById("video1"); 
+	<p class="blocktext">
+	The lineplot below displays the average monthly temperature (in degrees Celsius) of the Earth's surface from 1753-2105. The thicker, darker line represents the fitted trend line, which changes as data is revealed. Press the "Play/Pause" button to control the video. 
+	<br><br>
+	What do you observe? Is the Earth's surface temperature rising? Press the link below to display an interactive version of the plot, where you can investigate further.
+	<br><br>
+	Data source: <a href="https://www.kaggle.com/berkeleyearth/climate-change-earth-surface-temperature-data?select=GlobalLandTemperaturesByCountry.csv" target="_blank">Climate Change: Earth Surface Temperature Data</a>
+	</p>
 
-function playPause() { 
-  if (myVideo.paused) 
-    myVideo.play(); 
-  else 
-    myVideo.pause(); 
-} 
+	<p class="blocktext-center">
+		<b><a href="page2.html">CLICK HERE TO INTERACT WITH THIS DATA!</a></b>
+	</p>
 
-</script> 
+	<div> 
+	  <button onclick="playPause()">Play/Pause</button>
+	  <br><br>
+	  <video id="video1" width="1000" height="600" autoplay muted=true>
+	  	<source src="SurfaceTempViz.mp4" type="video/mp4">
+			Your browser does not support the video tag.
+		</video>
+	</div> 
 
-<p><a href="page2.html">Interact with this data!</a></p>
+	<script> 
+	var myVideo = document.getElementById("video1"); 
 
-</body> 
+	function playPause() { 
+	  if (myVideo.paused) 
+	    myVideo.play(); 
+	  else 
+	    myVideo.pause(); 
+	} 
+
+	</script> 
+
+	</body> 
 </html>

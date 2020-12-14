@@ -95,30 +95,17 @@ print("Num years:", numYears)
 maxTemp = math.ceil(maxTemp)
 minTemp = math.floor(minTemp)
 
-#print(rawData)
-#print(rawData.shape[0])
-
-#avgTempData = np.zeros((rawData.shape[0],2))
-#avgTempData = rawData[:, [0, 1]]
-
-#print(avgTempData)
-#print(avgTempData[2:4].values[1])
-#print(avgTempData.iloc[3, 1])
-#print(avgTempData[0:25].values[1])
-#print(avgTempData.columns)
-
-#color = ['red', 'green', 'blue', 'orange']
-#fig = plt.figure(figsize=(10,6))
-fig, ax = plt.subplots(figsize=(10,6))
-plt.xlim(1753, 2015)
-plt.ylim(minTemp, maxTemp)
-plt.xticks(np.arange(1753, 2015, step=10), rotation=45, ha="right", rotation_mode="anchor") #rotate the x-axis values
-plt.yticks(np.arange(minTemp, maxTemp, step=2))
-plt.subplots_adjust(bottom=0.2, top=0.9) #ensuring the dates (on the x-axis) fit in the screen
-plt.ylabel('Temperature (°C)')
-plt.xlabel('Year')
+# Set the properties for the animated plot
+fig, ax = plt.subplots(figsize=(12, 7))
 plt.title('Average Temperature')
+plt.xlabel('Year')
+plt.xlim(1753, 2015)
+plt.xticks(np.arange(1753, 2015, step=10), rotation=45, ha="right", rotation_mode="anchor")
+plt.ylabel('Temperature (°C)')
+plt.ylim(minTemp, maxTemp)
+plt.yticks(np.arange(minTemp, maxTemp, step=2))
 ax.yaxis.grid(color='lightgrey')
+plt.subplots_adjust(left=0.1, bottom=0.2, top=0.9)
 
 # Define the lines and trend lines
 i = 0
@@ -168,7 +155,7 @@ def animate(i):
         #else:
         #    trendLines[j].set_data(avgTempData2.index[:i], avgTempData2.iloc[:i, j])
 
-    plt.subplots_adjust(left=0.2)
+    #plt.subplots_adjust(left=0.2)
 
     #lines = [l0, l1, l2]
 
@@ -196,16 +183,17 @@ animator.save("SurfaceTempViz.mp4", writer=writer)
 #ax.get_legend().remove()
 
 # Set the properties for the interactive plot
-fig2, ax2 = plt.subplots(figsize=(10,6))
-plt.xlim(1753, 2015)
-plt.ylim(minTemp, maxTemp)
-plt.xticks(np.arange(1753, 2015, step=10), rotation=45, ha="right", rotation_mode="anchor") #rotate the x-axis values
-plt.yticks(np.arange(minTemp, maxTemp, step=2))
-plt.subplots_adjust(bottom=0.2, top=0.9) #ensuring the dates (on the x-axis) fit in the screen
-plt.ylabel('Temperature (°C)')
-plt.xlabel('Year')
+fig2, ax2 = plt.subplots(figsize=(12, 7))
 plt.title('Average Temperature')
+plt.xlabel('Year')
+plt.xlim(1753, 2015)
+plt.xticks(np.arange(1753, 2015, step=10), rotation=45, ha="right", rotation_mode="anchor")
+plt.ylabel('Temperature (°C)')
+plt.ylim(minTemp, maxTemp)
+plt.yticks(np.arange(minTemp, maxTemp, step=2))
 ax2.yaxis.grid(color='lightgrey')
+plt.subplots_adjust(left=0.1, bottom=0.2, top=0.9)
+
 
 lines2 = [None] * 12
 trendLines2 = [None] * 12
