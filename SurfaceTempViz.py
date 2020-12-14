@@ -105,7 +105,7 @@ plt.ylabel('Temperature (°C)')
 plt.ylim(minTemp, maxTemp)
 plt.yticks(np.arange(minTemp, maxTemp, step=2))
 ax.yaxis.grid(color='lightgrey')
-plt.subplots_adjust(left=0.1, bottom=0.2, top=0.9)
+#plt.subplots_adjust(left=0.1, bottom=0.1, top=0.9, right=0.9)
 
 # Define the lines and trend lines
 i = 0
@@ -122,7 +122,7 @@ handles, labels = ax.get_legend_handles_labels()
 labels = labels[::2]
 handles = handles[::2]
 ax.legend(handles, labels, loc='center left', bbox_to_anchor=(1, 0.5))
-
+plt.tight_layout()
 # Make checkbuttons with all plotted lines with correct visibility
 #rax = plt.axes([0.05, 0.4, 0.1, 0.15])
 #labels = [str(line.get_label()) for line in lines]
@@ -192,8 +192,9 @@ plt.ylabel('Temperature (°C)')
 plt.ylim(minTemp, maxTemp)
 plt.yticks(np.arange(minTemp, maxTemp, step=2))
 ax2.yaxis.grid(color='lightgrey')
-plt.subplots_adjust(left=0.1, bottom=0.2, top=0.9)
-
+#plt.subplots_adjust(left=0.1, bottom=0.2, top=0.9)
+plt.tight_layout()
+plt.subplots_adjust(left=0.1, right=0.9)
 
 lines2 = [None] * 12
 trendLines2 = [None] * 12
@@ -260,8 +261,9 @@ plugins.connect(fig2,
                 trendLines2ToolTip[10],
                 trendLines2ToolTip[11])
 
+
 # Generate the HTML page for the interactive plot
-html_file = open("page2.html", "w")
+html_file = open("page2_figure_only.html", "w")
 html_file.write(mpld3.fig_to_html(fig2))
 html_file.close()
 
