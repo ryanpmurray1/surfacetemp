@@ -38,10 +38,6 @@ svg
     background-color: #ffffff;
 }
 
-.mpld3-xaxis text
-{
-    
-}
 """
 
 #rawData = np.genfromtxt('GlobalTemperatures.csv', delimiter=",", skip_header=0, dtype=None, encoding=None)
@@ -201,15 +197,15 @@ trendLines2 = [None] * 12
 lines2ToolTip = [None] * 12
 trendLines2ToolTip = [None] * 12
 for j in range(12):
-    z = np.polyfit(avgTempData2.index[:numYears - 1].values, avgTempData2.iloc[:numYears-1, j].values, 4)
+    z = np.polyfit(avgTempData2.index[:numYears].values, avgTempData2.iloc[:numYears, j].values, 4)
     p = np.poly1d(z)
-    lines2[j], = ax2.plot(avgTempData2.index[:numYears-1], avgTempData2.iloc[:numYears-1, j],
+    lines2[j], = ax2.plot(avgTempData2.index[:numYears], avgTempData2.iloc[:numYears, j],
                         visible=True, lw=2, color=months[j][2], label=months[j][1], alpha=0.2, marker='.')
-    trendLines2[j], = ax2.plot(avgTempData2.index[:numYears-1], p(avgTempData2.index[:numYears-1]),
+    trendLines2[j], = ax2.plot(avgTempData2.index[:numYears], p(avgTempData2.index[:numYears]),
                         visible=True, lw=4, color=months[j][2], label=months[j][1], alpha=0.5, marker='.')
-    yvals = avgTempData2.iloc[:numYears-1, j].to_numpy()
-    xvals = avgTempData2.index[:numYears-1].to_numpy()
-    trendvals = p(avgTempData2.index[:numYears-1])
+    yvals = avgTempData2.iloc[:numYears, j].to_numpy()
+    xvals = avgTempData2.index[:numYears].to_numpy()
+    trendvals = p(avgTempData2.index[:numYears])
     toolTipLabel = [None] * len(yvals)
     trendToolTipLabel = [None] * len(trendvals)
     for i in range(len(toolTipLabel)):
@@ -244,7 +240,7 @@ plugins.connect(fig2,
                 lines2ToolTip[5],
                 lines2ToolTip[6],
                 lines2ToolTip[7],
-                lines2ToolTip[9],
+                lines2ToolTip[8],
                 lines2ToolTip[9],
                 lines2ToolTip[10],
                 lines2ToolTip[11],
@@ -256,7 +252,7 @@ plugins.connect(fig2,
                 trendLines2ToolTip[5],
                 trendLines2ToolTip[6],
                 trendLines2ToolTip[7],
-                trendLines2ToolTip[9],
+                trendLines2ToolTip[8],
                 trendLines2ToolTip[9],
                 trendLines2ToolTip[10],
                 trendLines2ToolTip[11])
