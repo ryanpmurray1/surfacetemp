@@ -4,13 +4,10 @@
 
 import numpy as np
 import pandas as pd
-import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-from matplotlib import pylab
-from matplotlib.widgets import CheckButtons
-import plotly.express as px
-import math
+#from matplotlib import pylab
+#from matplotlib.widgets import CheckButtons
 import mpld3
 from mpld3 import plugins
 from pylab import *
@@ -37,15 +34,12 @@ svg
     color: #000000;
     background-color: #ffffff;
 }
-
 """
-
-#rawData = np.genfromtxt('GlobalTemperatures.csv', delimiter=",", skip_header=0, dtype=None, encoding=None)
-avgTempData = pd.read_csv('GlobalTemperatures.csv', delimiter=",", header=0, usecols=[0,1,2])
-
-avgTempData2 = pd.DataFrame(columns=('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'), dtype=float)
-#avgTempData2.set_index('Year')
-#j = 0
+# ------------------------------------------------------------------------------------------------------------------
+# Raw Data Parser - Using Python, import the raw data, parse it, and store in variables and/or data structures (20%)
+# ------------------------------------------------------------------------------------------------------------------
+raw_data = pd.read_csv('GlobalTemperatures.csv', delimiter=",", header=0, usecols=[0, 1, 2])
+avg_temp_data = pd.DataFrame(columns=('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'), dtype=float)
 
 months = [["-01-", 'Jan', 'red'],
           ["-02-", 'Feb', 'green'],
@@ -60,207 +54,157 @@ months = [["-01-", 'Jan', 'red'],
           ["-11-", 'Nov', 'gold'],
           ["-12-", 'Dec', 'indigo']]
 
-minTemp = 100
-maxTemp = -100
+min_temp = 100
+max_temp = -100
 
 # Transpose the data for each entry into month columns
-for i in range(avgTempData.shape[0]):
-    #print(avgTempData.iloc[i, 0])
-    year = int(avgTempData.iloc[i, 0][0:4])
-    #print(year)
-    #if avgTempData.iloc[i,0] not in avgTempData2:
+for i in range(raw_data.shape[0]):
+    year = int(raw_data.iloc[i, 0][0:4])
     if year >= 1753:
-        avgTempData2.append(pd.Series(name=year, dtype=float))
+        avg_temp_data.append(pd.Series(name=year, dtype=float))
         for month in months:
-            if month[0] in avgTempData.iloc[i, 0]:
-                currTemp = avgTempData.iloc[i, 1].astype(float)
-                avgTempData2.loc[year, month[1]] = currTemp
-                if currTemp > maxTemp:
-                    maxTemp = currTemp
-                if currTemp < minTemp:
-                    minTemp = currTemp
+            if month[0] in raw_data.iloc[i, 0]:
+                currTemp = raw_data.iloc[i, 1].astype(float)
+                avg_temp_data.loc[year, month[1]] = currTemp
+                if currTemp > max_temp:
+                    max_temp = currTemp
+                if currTemp < min_temp:
+                    min_temp = currTemp
 
-
-print(avgTempData2)
-numYears = len(avgTempData2.index)
-
-print("Max temp:", maxTemp)
-print("Min temp:", minTemp)
-print("Num years:", numYears)
-
-maxTemp = math.ceil(maxTemp)
-minTemp = math.floor(minTemp)
+# Calculate the total number of years, and max/min temperature values to plot
+num_years = len(avg_temp_data.index)
+max_temp = math.ceil(max_temp)
+min_temp = math.floor(min_temp)
 
 # Set the properties for the animated plot
-fig, ax = plt.subplots(figsize=(12, 7))
+fig_ani, ax_ani = plt.subplots(figsize=(12, 7))
 plt.title('Average Temperature')
 plt.xlabel('Year')
 plt.xlim(1753, 2015)
 plt.xticks(np.arange(1753, 2015, step=10), rotation=45, ha="right", rotation_mode="anchor")
 plt.ylabel('Temperature (°C)')
-plt.ylim(minTemp, maxTemp)
-plt.yticks(np.arange(minTemp, maxTemp, step=2))
-ax.yaxis.grid(color='lightgrey')
-#plt.subplots_adjust(left=0.1, bottom=0.1, top=0.9, right=0.9)
+plt.ylim(min_temp, max_temp)
+plt.yticks(np.arange(min_temp, max_temp, step=2))
+ax_ani.yaxis.grid(color='lightgrey')
 
-# Define the lines and trend lines
-i = 0
-lines = [None] * 12
-trendLines = [None] * 12
+# -------------------------------------------------------------
+# Plot the Data - Generate a chart using Python libraries (35%)
+# -------------------------------------------------------------
+lines_ani = [None] * 12
+trend_lines_ani = [None] * 12
 for j in range(12):
-    trendLines[j], = ax.plot(avgTempData2.index[:i], avgTempData2.iloc[:i, j],
-                             visible=True, lw=2, color=months[j][2], label=months[j][1], alpha=1)
-    lines[j], = ax.plot(avgTempData2.index[:i], avgTempData2.iloc[:i, j],
-                        visible=True, lw=2, color=months[j][2], label=months[j][1], alpha=0.25)
+    trend_lines_ani[j], = ax_ani.plot(avg_temp_data.index[:0], avg_temp_data.iloc[:0, j],
+                                      visible=True, lw=2, color=months[j][2], label=months[j][1], alpha=1)
+    lines_ani[j], = ax_ani.plot(avg_temp_data.index[:0], avg_temp_data.iloc[:0, j],
+                                visible=True, lw=2, color=months[j][2], label=months[j][1], alpha=0.25)
 
 # Define the legend
-handles, labels = ax.get_legend_handles_labels()
+handles, labels = ax_ani.get_legend_handles_labels()
 labels = labels[::2]
 handles = handles[::2]
-ax.legend(handles, labels, loc='center left', bbox_to_anchor=(1, 0.5))
+ax_ani.legend(handles, labels, loc='center left', bbox_to_anchor=(1, 0.5))
 plt.tight_layout()
-# Make checkbuttons with all plotted lines with correct visibility
-#rax = plt.axes([0.05, 0.4, 0.1, 0.15])
-#labels = [str(line.get_label()) for line in lines]
-#visibility = [line.get_visible() for line in lines]
-#check = CheckButtons(rax, labels, visibility)
 
-#lines = [0, 0, 0]
-
-# Function to define the interactive labels
-#def func(label):
-#    index = labels.index(label)
-#    lines[index].set_visible(not lines[index].get_visible())
-#    #plt.draw()
-
+# Function to perform the animation on the animation plot
 def animate(i):
-    #print(i)
-    #avgTempData2.plot()
-
-    #data = avgTempData2.iloc[:int(i+1)] #select data range
-    #print("data.index:", data.index)
-    #print("data:", data)
-    #print("data['Jan']:", data['Jan'])
-
-    for j in range(len(lines)):
-        lines[j].set_data(avgTempData2.index[:i], avgTempData2.iloc[:i, j])
+    for j in range(len(lines_ani)):
+        lines_ani[j].set_data(avg_temp_data.index[:i], avg_temp_data.iloc[:i, j])
         if i > 20:
-            z = np.polyfit(avgTempData2.index[:i].values, avgTempData2.iloc[:i, j].values, 4)
+            z = np.polyfit(avg_temp_data.index[:i].values, avg_temp_data.iloc[:i, j].values, 4)
             p = np.poly1d(z)
-            trendLines[j].set_data(avgTempData2.index[:i], p(avgTempData2.index[:i]))
-        #else:
-        #    trendLines[j].set_data(avgTempData2.index[:i], avgTempData2.iloc[:i, j])
+            trend_lines_ani[j].set_data(avg_temp_data.index[:i], p(avg_temp_data.index[:i]))
 
-    #plt.subplots_adjust(left=0.2)
-
-    #lines = [l0, l1, l2]
-
-# Add checkable legend on left side
-#rax = plt.axes([0.05, 0.4, 0.1, 0.15])
-#labels = [str(line.get_label()) for line in lines]
-#visibility = [line.get_visible() for line in lines]
-#check = CheckButtons(rax, labels, visibility)
-#check.on_clicked(func)
-
-
-animator = animation.FuncAnimation(fig, animate, frames=numYears, interval=20, repeat=False, fargs=None)
-
-# Save the animation as an HTML page (instead of an MP4)
-#with open("myvideo.html", "w") as f:
-#    print(animator.to_html5_video(), file=f)
+# --------------------------------------------------------
+# Animate - Add animation to the chart with controls (15%)
+# --------------------------------------------------------
+animator = animation.FuncAnimation(fig_ani, animate, frames=num_years, interval=20, repeat=False, fargs=None)
 
 # Save the animation as an MP4 video file
 writer = animation.FFMpegWriter(fps=15, metadata=dict(artist='Me'), bitrate=1800)
 animator.save("SurfaceTempViz.mp4", writer=writer)
-#animator.to_jshtml()
-#animator.to_html5_video()
-#plt.show()
-
-#ax.get_legend().remove()
 
 # Set the properties for the interactive plot
-fig2, ax2 = plt.subplots(figsize=(12, 7))
+fig_int, ax_int = plt.subplots(figsize=(12, 7))
 plt.title('Average Temperature')
 plt.xlabel('Year')
 plt.xlim(1753, 2015)
 plt.xticks(np.arange(1753, 2015, step=10), rotation=45, ha="right", rotation_mode="anchor")
 plt.ylabel('Temperature (°C)')
-plt.ylim(minTemp, maxTemp)
-plt.yticks(np.arange(minTemp, maxTemp, step=2))
-ax2.yaxis.grid(color='lightgrey')
-#plt.subplots_adjust(left=0.1, bottom=0.2, top=0.9)
+plt.ylim(min_temp, max_temp)
+plt.yticks(np.arange(min_temp, max_temp, step=2))
+ax_int.yaxis.grid(color='lightgrey')
 plt.tight_layout()
 plt.subplots_adjust(left=0.1, right=0.9)
 
-lines2 = [None] * 12
-trendLines2 = [None] * 12
-lines2ToolTip = [None] * 12
-trendLines2ToolTip = [None] * 12
+# -------------------------------------------------------------
+# Plot the Data - Generate a chart using Python libraries (35%)
+# -------------------------------------------------------------
+lines_int = [None] * 12
+trend_lines_int = [None] * 12
+lines_tooltip = [None] * 12
+trend_lines_tooltip = [None] * 12
 for j in range(12):
-    z = np.polyfit(avgTempData2.index[:numYears].values, avgTempData2.iloc[:numYears, j].values, 4)
+    z = np.polyfit(avg_temp_data.index[:num_years].values, avg_temp_data.iloc[:num_years, j].values, 4)
     p = np.poly1d(z)
-    lines2[j], = ax2.plot(avgTempData2.index[:numYears], avgTempData2.iloc[:numYears, j],
-                        visible=True, lw=2, color=months[j][2], label=months[j][1], alpha=0.2, marker='.')
-    trendLines2[j], = ax2.plot(avgTempData2.index[:numYears], p(avgTempData2.index[:numYears]),
-                        visible=True, lw=4, color=months[j][2], label=months[j][1], alpha=0.5, marker='.')
-    yvals = avgTempData2.iloc[:numYears, j].to_numpy()
-    xvals = avgTempData2.index[:numYears].to_numpy()
-    trendvals = p(avgTempData2.index[:numYears])
-    toolTipLabel = [None] * len(yvals)
-    trendToolTipLabel = [None] * len(trendvals)
-    for i in range(len(toolTipLabel)):
-        toolTipLabel[i] = months[j][1] + " " + xvals[i].astype(str) + ": " + ("{:.2f}".format(yvals[i])) + " °C"
-        trendToolTipLabel[i] = "Trend: " + months[j][1] + " " + xvals[i].astype(str) + ": " + ("{:.2f}".format(trendvals[i])) + " °C"
+    lines_int[j], = ax_int.plot(avg_temp_data.index[:num_years], avg_temp_data.iloc[:num_years, j],
+                                visible=True, lw=2, color=months[j][2], label=months[j][1], alpha=0.2, marker='.')
+    trend_lines_int[j], = ax_int.plot(avg_temp_data.index[:num_years], p(avg_temp_data.index[:num_years]),
+                                      visible=True, lw=4, color=months[j][2], label=months[j][1], alpha=0.5, marker='.')
+    y_vals = avg_temp_data.iloc[:num_years, j].to_numpy()
+    x_vals = avg_temp_data.index[:num_years].to_numpy()
+    trend_vals = p(avg_temp_data.index[:num_years])
+    tooltip_label = [None] * len(y_vals)
+    trend_tooltip_label = [None] * len(trend_vals)
+    for i in range(len(tooltip_label)):
+        tooltip_label[i] = months[j][1] + " " + x_vals[i].astype(str) + ": " + ("{:.2f}".format(y_vals[i])) + " °C"
+        trend_tooltip_label[i] = "Trend: " + months[j][1] + " " + x_vals[i].astype(str) + ": " + ("{:.2f}".format(trend_vals[i])) + " °C"
 
-    #print(toolTipLabel)
-    #lines2ToolTip[j] = plugins.PointLabelTooltip(lines2[j], labels=yvals, voffset=0, hoffset=10, location='mouse')
-    lines2ToolTip[j] = plugins.PointHTMLTooltip(lines2[j], labels=toolTipLabel, voffset=10, hoffset=10, css=css)
-    trendLines2ToolTip[j] = plugins.PointHTMLTooltip(trendLines2[j], labels=trendToolTipLabel, voffset=10, hoffset=10, css=css)
+    lines_tooltip[j] = plugins.PointHTMLTooltip(lines_int[j], labels=tooltip_label, voffset=10, hoffset=10, css=css)
+    trend_lines_tooltip[j] = plugins.PointHTMLTooltip(trend_lines_int[j], labels=trend_tooltip_label, voffset=10, hoffset=10, css=css)
 
+# ----------------------------------------------------------------------------------
+# Interactive Features - Add interactive features to the chart (e.g., filters) (15%)
+# ----------------------------------------------------------------------------------
 # Create the interactive legend
-#handles, labels = ax2.get_legend_handles_labels()
 line_collections = [None] * 12
 for i in range(12):
-    line_collections[i] = [lines2[i], trendLines2[i]]
+    line_collections[i] = [lines_int[i], trend_lines_int[i]]
 labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 interactive_legend = plugins.InteractiveLegendPlugin(line_collections, labels, alpha_unsel=0, alpha_over=1.5, start_visible=True)
-plugins.connect(fig2, interactive_legend)
-#mpld3.show()
+plugins.connect(fig_int, interactive_legend)
 
-#labels = ['point {0}'.format(i + 1) for i in range(numYears)]
-#tooltip = plugins.PointLabelTooltip(trendLines2[0], "Label1", voffset=0, hoffset=10, location='mouse')
-#print(tooltip)
-#plugins.connect(fig2, tooltip)
-plugins.connect(fig2,
-                lines2ToolTip[0],
-                lines2ToolTip[1],
-                lines2ToolTip[2],
-                lines2ToolTip[3],
-                lines2ToolTip[4],
-                lines2ToolTip[5],
-                lines2ToolTip[6],
-                lines2ToolTip[7],
-                lines2ToolTip[8],
-                lines2ToolTip[9],
-                lines2ToolTip[10],
-                lines2ToolTip[11],
-                trendLines2ToolTip[0],
-                trendLines2ToolTip[1],
-                trendLines2ToolTip[2],
-                trendLines2ToolTip[3],
-                trendLines2ToolTip[4],
-                trendLines2ToolTip[5],
-                trendLines2ToolTip[6],
-                trendLines2ToolTip[7],
-                trendLines2ToolTip[8],
-                trendLines2ToolTip[9],
-                trendLines2ToolTip[10],
-                trendLines2ToolTip[11])
+plugins.connect(fig_int,
+                lines_tooltip[0],
+                lines_tooltip[1],
+                lines_tooltip[2],
+                lines_tooltip[3],
+                lines_tooltip[4],
+                lines_tooltip[5],
+                lines_tooltip[6],
+                lines_tooltip[7],
+                lines_tooltip[8],
+                lines_tooltip[9],
+                lines_tooltip[10],
+                lines_tooltip[11],
+                trend_lines_tooltip[0],
+                trend_lines_tooltip[1],
+                trend_lines_tooltip[2],
+                trend_lines_tooltip[3],
+                trend_lines_tooltip[4],
+                trend_lines_tooltip[5],
+                trend_lines_tooltip[6],
+                trend_lines_tooltip[7],
+                trend_lines_tooltip[8],
+                trend_lines_tooltip[9],
+                trend_lines_tooltip[10],
+                trend_lines_tooltip[11])
 
-
+# ----------------------------------------------------------------------------------------------------------
+# Publish Online - Publish the resulting interactive charts to a website, adding some descriptive text (15%)
+# ----------------------------------------------------------------------------------------------------------
 # Generate the HTML page for the interactive plot
 html_file = open("page2_figure_only.html", "w")
-html_file.write(mpld3.fig_to_html(fig2))
+html_file.write(mpld3.fig_to_html(fig_int))
 html_file.close()
 
 #plt.show()
